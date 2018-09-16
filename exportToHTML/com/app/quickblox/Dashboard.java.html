@@ -1,0 +1,102 @@
+<html>
+<head>
+<title>Dashboard.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(169,183,198); }
+.s1 { color: rgb(204,120,50); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Dashboard.java</FONT>
+</center></TD></TR></TABLE>
+<pre>
+ <span class="s0">zpackage com.app.quickblox</span><span class="s1">;</span><span class="s0"> 
+ 
+</span><span class="s1">import </span><span class="s0">android.app.ProgressDialog</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">android.content.Context</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">android.os.Bundle</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">android.support.design.widget.FloatingActionButton</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">android.support.v7.app.AppCompatActivity</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">android.support.v7.widget.RecyclerView</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">android.view.View</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">android.widget.Button</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">android.widget.EditText</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">android.widget.Toast</span><span class="s1">;</span><span class="s0"> 
+ 
+</span><span class="s1">import </span><span class="s0">com.quickblox.auth.QBAuth</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">com.quickblox.auth.session.QBSession</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">com.quickblox.auth.session.QBSettings</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">com.quickblox.core.QBEntityCallback</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">com.quickblox.core.exception.QBResponseException</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">com.quickblox.users.QBUsers</span><span class="s1">;</span><span class="s0"> 
+</span><span class="s1">import </span><span class="s0">com.quickblox.users.model.QBUser</span><span class="s1">;</span><span class="s0"> 
+ 
+</span><span class="s1">public class </span><span class="s0">Dashboard </span><span class="s1">extends </span><span class="s0">AppCompatActivity </span><span class="s1">implements </span><span class="s0">View.OnClickListener { 
+ 
+    RecyclerView rvLoadChatdialog</span><span class="s1">;</span><span class="s0"> 
+    FloatingActionButton fabAddChatUser</span><span class="s1">;</span><span class="s0"> 
+ 
+    Context mContext</span><span class="s1">;</span><span class="s0"> 
+    String user</span><span class="s1">, </span><span class="s0">password</span><span class="s1">;</span><span class="s0"> 
+ 
+ 
+    @Override 
+    </span><span class="s1">protected void </span><span class="s0">onCreate(Bundle savedInstanceState) { 
+        </span><span class="s1">super</span><span class="s0">.onCreate(savedInstanceState)</span><span class="s1">;</span><span class="s0"> 
+        setContentView(R.layout.activity_dashboard)</span><span class="s1">;</span><span class="s0"> 
+ 
+        mContext = </span><span class="s1">this;</span><span class="s0"> 
+ 
+        user = getIntent().getExtras().getString(</span><span class="s2">&quot;userId&quot;</span><span class="s0">)</span><span class="s1">;</span><span class="s0"> 
+        password = getIntent().getExtras().getString(</span><span class="s2">&quot;userPassword&quot;</span><span class="s0">)</span><span class="s1">;</span><span class="s0"> 
+ 
+      </span><span class="s3">//  initializeQuickBlox();</span><span class="s0"> 
+        createsessionForChat()</span><span class="s1">;</span><span class="s0"> 
+        initView()</span><span class="s1">;</span><span class="s0"> 
+    } 
+ 
+    </span><span class="s1">private void </span><span class="s0">createsessionForChat() { 
+        ProgressDialog mDilaog = </span><span class="s1">new </span><span class="s0">ProgressDialog(mContext)</span><span class="s1">;</span><span class="s0"> 
+        mDilaog.setMessage(</span><span class="s2">&quot;Please wait&quot;</span><span class="s0">)</span><span class="s1">;</span><span class="s0"> 
+        mDilaog.show()</span><span class="s1">;</span><span class="s0"> 
+ 
+        QBUser qbUser=</span><span class="s1">new </span><span class="s0">QBUser(user</span><span class="s1">,</span><span class="s0">password)</span><span class="s1">;</span><span class="s0"> 
+        QBAuth.createSession(qbUser).performAsync(</span><span class="s1">new </span><span class="s0">QBEntityCallback&lt;QBSession&gt;() { 
+            @Override 
+            </span><span class="s1">public void </span><span class="s0">onSuccess(QBSession qbSession</span><span class="s1">, </span><span class="s0">Bundle bundle) { 
+                qbUser.set 
+            } 
+ 
+            @Override 
+            </span><span class="s1">public void </span><span class="s0">onError(QBResponseException e) { 
+ 
+            } 
+        })</span><span class="s1">;</span><span class="s0"> 
+ 
+    } 
+ 
+    </span><span class="s1">private void </span><span class="s0">initView() { 
+        rvLoadChatdialog = findViewById(R.id.rvLoadChatdialog)</span><span class="s1">;</span><span class="s0"> 
+        fabAddChatUser = findViewById(R.id.fabAddChatUser)</span><span class="s1">;</span><span class="s0"> 
+        fabAddChatUser.setOnClickListener(</span><span class="s1">this</span><span class="s0">)</span><span class="s1">;</span><span class="s0"> 
+    } 
+ 
+    </span><span class="s1">private void </span><span class="s0">initializeQuickBlox() { 
+        QBSettings.getInstance().init(mContext</span><span class="s1">, </span><span class="s0">Constants.APPLICATIONID</span><span class="s1">, </span><span class="s0">Constants.AUTHORIZATIONKEY</span><span class="s1">, </span><span class="s0">Constants.AUTHORIZATIONSECRET)</span><span class="s1">;</span><span class="s0"> 
+        QBSettings.getInstance().setAccountKey(Constants.ACCOUNTKEY)</span><span class="s1">;</span><span class="s0"> 
+    } 
+ 
+    @Override 
+    </span><span class="s1">public void </span><span class="s0">onClick(View v) { 
+    } 
+} 
+</span></pre>
+</body>
+</html>
